@@ -40,3 +40,7 @@ No extra libraries are needed.
 Add a `"neighbors"` list to the data file to draw other lots in a different colour, for example the other lots of a
 subdivision. Each has a `name` and `corners_m`, a list of `[east, north]` positions in metres measured from corner 1
 of the main parcel. Neighbours move with the main parcel when you use a `shift`.
+
+Optional styling: give the main parcel or any neighbour a `"style"` (`line_color`, `fill_color`, `width`, `fill`; colours are
+KML `aabbggrr`), give the main parcel a `"label"`, add a `"description"` for the file, or set `"clean": true` to leave out
+the pins and tie line.

@@ -108,6 +108,16 @@ def area_and_closure(corners):
 
 # --- Step 4: write the Google Earth file ---------------------------------------------------------
 
+def style_xml(style):
+    """Inline KML style from a small dict: line_color, fill_color, width, fill (all optional). Colours are aabbggrr."""
+    line = f"<LineStyle><color>{style.get('line_color', 'ffffffff')}</color><width>{style.get('width', 2)}</width></LineStyle>"
+    if style.get("fill") is False:
+        fill = "<PolyStyle><fill>0</fill></PolyStyle>"
+    else:
+        fill = f"<PolyStyle><color>{style.get('fill_color', '33ffffff')}</color></PolyStyle>"
+    return f"<Style>{line}{fill}</Style>"
+
+
 def write_kml(parcel, monument, corners, path):
     """Write a KML file (the format Google Earth opens) with the outline and labelled points."""
     lat0, lon0 = parcel["monument"]["lat"], parcel["monument"]["lon"]
@@ -133,27 +143,32 @@ def write_kml(parcel, monument, corners, path):
         pts = [(base_e + e, base_n + n) for e, n in lot["corners_m"]]
         lot_ring = " ".join(coord(e, n) for e, n in pts + pts[:1])
         neighbours.append(f"""    <Placemark><name>{lot['name']}</name><description>{lot.get('note', '')}</description>
-      <styleUrl>#neighbour</styleUrl>
+      {style_xml(lot['style']) if 'style' in lot else '<styleUrl>#neighbour</styleUrl>'}
       <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing>
         <coordinates>{lot_ring}</coordinates>
       </LinearRing></outerBoundaryIs></Polygon></Placemark>""")
 
+    main_style = style_xml(parcel["style"]) if "style" in parcel else "<styleUrl>#outline</styleUrl>"
+    tie_line = "" if parcel.get("clean") else f"""    <Placemark><name>Tie line</name><styleUrl>#outline</styleUrl>
+      <LineString><tessellate>1</tessellate>
+        <coordinates>{coord(*monument)} {coord(outline[0][1], outline[0][2])}</coordinates>
+      </LineString></Placemark>"""
+    if parcel.get("clean"):                         # "clean": true draws only the outlines, no pins or tie line
+        pins = []
+
     kml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
-    <name>{parcel.get('name', 'Parcel')}</name>
+    <name>{parcel.get('name', 'Parcel')}</name><description>{parcel.get('description', '')}</description>
     <Style id="outline"><LineStyle><color>ff00ffff</color><width>3</width></LineStyle>
       <PolyStyle><color>3300ffff</color></PolyStyle></Style>
     <Style id="neighbour"><LineStyle><color>ffffaa00</color><width>2</width></LineStyle>
       <PolyStyle><color>33ffaa00</color></PolyStyle></Style>
-    <Placemark><name>{parcel.get('name', 'Parcel')} boundary</name><styleUrl>#outline</styleUrl>
+    <Placemark><name>{parcel.get('label', str(parcel.get('name', 'Parcel')) + ' boundary')}</name>{main_style}
       <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing>
         <coordinates>{ring}</coordinates>
       </LinearRing></outerBoundaryIs></Polygon></Placemark>
-    <Placemark><name>Tie line</name><styleUrl>#outline</styleUrl>
-      <LineString><tessellate>1</tessellate>
-        <coordinates>{coord(*monument)} {coord(outline[0][1], outline[0][2])}</coordinates>
-      </LineString></Placemark>
+{tie_line}
 {chr(10).join(neighbours)}
 {chr(10).join(pins)}
   </Document>
