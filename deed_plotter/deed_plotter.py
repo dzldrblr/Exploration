@@ -69,8 +69,13 @@ def walk(parcel):
     """
     east, north = 0.0, 0.0                          # we start standing on the monument
     # Optional nudge, for lining the outline up with what you see on the satellite image.
+    # It can be given as metres east/north, or as a distance along an azimuth (degrees clockwise from north).
     east += parcel.get("shift_east_m", 0.0)
     north += parcel.get("shift_north_m", 0.0)
+    if "shift" in parcel:
+        azimuth = radians(parcel["shift"]["azimuth_deg"])
+        east += parcel["shift"]["distance_m"] * sin(azimuth)
+        north += parcel["shift"]["distance_m"] * cos(azimuth)
     monument = (east, north)
 
     tie = parcel["tie"]                             # the line from the monument to corner 1

@@ -22,8 +22,9 @@ No extra libraries are needed.
 4. `legs`: one entry per side, in order, ending with the leg that returns to corner 1.
    Bearings are written like `N 74°09' W` (north or south, degrees, minutes, east or west).
 5. `stated_area_sqm` is optional. If given, it is printed next to the computed area as a check.
-6. Optional `shift_east_m` and `shift_north_m` slide the whole outline, in metres, to line it up with the satellite image
-   (useful if the monument's coordinates are on an older datum).
+6. Optional: slide the whole outline to line it up with the satellite image (useful if the monument's coordinates
+   are on an older datum). Either give `"shift": {"azimuth_deg": 108.49, "distance_m": 105.61}` (a distance along an
+   azimuth, measured clockwise from north) or `shift_east_m` and `shift_north_m`.
 
 `parcel.json` and all `.kml` files are listed in `.gitignore`, so real deed data is not uploaded to GitHub.
 
