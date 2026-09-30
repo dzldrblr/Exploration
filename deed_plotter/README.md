@@ -34,3 +34,9 @@ No extra libraries are needed.
   monument's coordinates are WGS84, which is what Google Earth uses.
 - It assumes bearings are from true north.
 - The outline is a plot of the deed's numbers, not a legal survey.
+
+## Drawing neighbouring lots (optional)
+
+Add a `"neighbors"` list to the data file to draw other lots in a different colour, for example the other lots of a
+subdivision. Each has a `name` and `corners_m`, a list of `[east, north]` positions in metres measured from corner 1
+of the main parcel. Neighbours move with the main parcel when you use a `shift`.

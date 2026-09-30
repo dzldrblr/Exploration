@@ -122,12 +122,27 @@ def write_kml(parcel, monument, corners, path):
         pins.append(f"""    <Placemark><name>Point {label}</name>
       <Point><coordinates>{coord(e, n)}</coordinates></Point></Placemark>""")
 
+    # Optional neighbouring lots (for example the other lots on a subdivision plan). Their corners are given in
+    # metres east/north of corner 1, so they move together with the main parcel.
+    neighbours = []
+    for lot in parcel.get("neighbors", []):
+        base_e, base_n = corners[0][1], corners[0][2]
+        pts = [(base_e + e, base_n + n) for e, n in lot["corners_m"]]
+        lot_ring = " ".join(coord(e, n) for e, n in pts + pts[:1])
+        neighbours.append(f"""    <Placemark><name>{lot['name']}</name><description>{lot.get('note', '')}</description>
+      <styleUrl>#neighbour</styleUrl>
+      <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing>
+        <coordinates>{lot_ring}</coordinates>
+      </LinearRing></outerBoundaryIs></Polygon></Placemark>""")
+
     kml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
     <name>{parcel.get('name', 'Parcel')}</name>
     <Style id="outline"><LineStyle><color>ff00ffff</color><width>3</width></LineStyle>
       <PolyStyle><color>3300ffff</color></PolyStyle></Style>
+    <Style id="neighbour"><LineStyle><color>ffffaa00</color><width>2</width></LineStyle>
+      <PolyStyle><color>33ffaa00</color></PolyStyle></Style>
     <Placemark><name>{parcel.get('name', 'Parcel')} boundary</name><styleUrl>#outline</styleUrl>
       <Polygon><tessellate>1</tessellate><outerBoundaryIs><LinearRing>
         <coordinates>{ring}</coordinates>
@@ -136,6 +151,7 @@ def write_kml(parcel, monument, corners, path):
       <LineString><tessellate>1</tessellate>
         <coordinates>{coord(*monument)} {coord(outline[0][1], outline[0][2])}</coordinates>
       </LineString></Placemark>
+{chr(10).join(neighbours)}
 {chr(10).join(pins)}
   </Document>
 </kml>
@@ -170,6 +186,9 @@ def main():
     print(f"Area from the walked outline: {area:,.0f} square metres")
     if "stated_area_sqm" in parcel:
         print(f"Area stated in the deed:      {parcel['stated_area_sqm']:,} square metres")
+    for lot in parcel.get("neighbors", []):
+        _, lot_area = area_and_closure([("", e, n) for e, n in lot["corners_m"]] + [("", *lot["corners_m"][0])])
+        print(f"  {lot['name']}: {lot_area:,.0f} square metres")
     print(f"Wrote {output} -- double-click it to open in Google Earth.")
 
 
