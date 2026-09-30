@@ -72,10 +72,13 @@ def walk(parcel):
     # It can be given as metres east/north, or as a distance along an azimuth (degrees clockwise from north).
     east += parcel.get("shift_east_m", 0.0)
     north += parcel.get("shift_north_m", 0.0)
-    if "shift" in parcel:
-        azimuth = radians(parcel["shift"]["azimuth_deg"])
-        east += parcel["shift"]["distance_m"] * sin(azimuth)
-        north += parcel["shift"]["distance_m"] * cos(azimuth)
+    shifts = parcel.get("shift", [])
+    if isinstance(shifts, dict):                    # a single shift, or a list of shifts applied one after another
+        shifts = [shifts]
+    for one in shifts:
+        azimuth = radians(one["azimuth_deg"])
+        east += one["distance_m"] * sin(azimuth)
+        north += one["distance_m"] * cos(azimuth)
     monument = (east, north)
 
     tie = parcel["tie"]                             # the line from the monument to corner 1

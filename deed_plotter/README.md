@@ -24,7 +24,7 @@ No extra libraries are needed.
 5. `stated_area_sqm` is optional. If given, it is printed next to the computed area as a check.
 6. Optional: slide the whole outline to line it up with the satellite image (useful if the monument's coordinates
    are on an older datum). Either give `"shift": {"azimuth_deg": 108.49, "distance_m": 105.61}` (a distance along an
-   azimuth, measured clockwise from north) or `shift_east_m` and `shift_north_m`.
+   azimuth, measured clockwise from north; a list of several such shifts is applied one after another) or `shift_east_m` and `shift_north_m`.
 
 `parcel.json` and all `.kml` files are listed in `.gitignore`, so real deed data is not uploaded to GitHub.
 
