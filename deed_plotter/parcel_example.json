@@ -1,0 +1,12 @@
+{
+  "name": "Example parcel (made-up numbers)",
+  "monument": {"name": "Example monument", "lat": 15.9, "lon": 120.5},
+  "tie": {"bearing": "N 45°00' E", "distance_m": 100.00},
+  "legs": [
+    {"to": "2", "bearing": "N 80°00' E", "distance_m": 120.00},
+    {"to": "3", "bearing": "S 10°00' E", "distance_m": 95.00},
+    {"to": "4", "bearing": "S 80°00' W", "distance_m": 120.00},
+    {"to": "1", "bearing": "N 10°00' W", "distance_m": 95.00}
+  ],
+  "stated_area_sqm": 11400
+}
