@@ -171,7 +171,8 @@ def write_kml(parcel, monument, corners, path):
     for mk in parcel.get("markers", []):
         markers.append(f"""    <Placemark><name>{mk['name']}</name><description>{mk.get('note', '')}</description>
       <Style><IconStyle><color>{mk.get('color', 'ffffffff')}</color><scale>{mk.get('scale', 1.2)}</scale>
-        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle></Style>
+        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle>
+        <LabelStyle><scale>{0 if mk.get('hide_label') else 1}</scale></LabelStyle></Style>
       <Point><coordinates>{mk['lon']:.8f},{mk['lat']:.8f},0</coordinates></Point></Placemark>""")
 
     main_style = style_xml(parcel["style"]) if "style" in parcel else "<styleUrl>#outline</styleUrl>"

@@ -50,3 +50,5 @@ Optional `"lines"`: a list of `{"name", "points_m", "style"}` drawn as lines (fo
 Optional `"labels"`: text labels with no icon, `{"name", "point_m", "color", "scale"}`, with the point in metres east/north of corner 1.
 
 Optional `"markers"`: point markers at absolute positions, `{"name", "lat", "lon", "color", "note"}`.
+
+A marker with `"hide_label": true` shows only its dot; the name still appears when you click it.
