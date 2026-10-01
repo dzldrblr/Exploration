@@ -2,3 +2,5 @@
 *.json
 !parcel_example.json
 *.kml
+*.kmz
+*.zip
