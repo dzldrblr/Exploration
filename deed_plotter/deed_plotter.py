@@ -157,6 +157,15 @@ def write_kml(parcel, monument, corners, path):
       {style_xml(ln['style']) if 'style' in ln else '<styleUrl>#outline</styleUrl>'}
       <LineString><tessellate>1</tessellate><coordinates>{' '.join(coord(e, n) for e, n in pts)}</coordinates></LineString></Placemark>""")
 
+    # Optional text labels with no icon, given as points in metres east/north of corner 1.
+    labels = []
+    for lb in parcel.get("labels", []):
+        base_e, base_n = corners[0][1], corners[0][2]
+        e, n = base_e + lb["point_m"][0], base_n + lb["point_m"][1]
+        labels.append(f"""    <Placemark><name>{lb['name']}</name>
+      <Style><IconStyle><scale>0</scale></IconStyle><LabelStyle><color>{lb.get('color', 'ffffffff')}</color><scale>{lb.get('scale', 1.0)}</scale></LabelStyle></Style>
+      <Point><coordinates>{coord(e, n)}</coordinates></Point></Placemark>""")
+
     main_style = style_xml(parcel["style"]) if "style" in parcel else "<styleUrl>#outline</styleUrl>"
     tie_line = "" if parcel.get("clean") else f"""    <Placemark><name>Tie line</name><styleUrl>#outline</styleUrl>
       <LineString><tessellate>1</tessellate>
@@ -180,6 +189,7 @@ def write_kml(parcel, monument, corners, path):
 {tie_line}
 {chr(10).join(neighbours)}
 {chr(10).join(lines)}
+{chr(10).join(labels)}
 {chr(10).join(pins)}
   </Document>
 </kml>

@@ -46,3 +46,5 @@ KML `aabbggrr`), give the main parcel a `"label"`, add a `"description"` for the
 the pins and tie line.
 
 Optional `"lines"`: a list of `{"name", "points_m", "style"}` drawn as lines (for example a road), with points in metres east/north of corner 1.
+
+Optional `"labels"`: text labels with no icon, `{"name", "point_m", "color", "scale"}`, with the point in metres east/north of corner 1.
