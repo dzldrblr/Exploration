@@ -148,6 +148,15 @@ def write_kml(parcel, monument, corners, path):
         <coordinates>{lot_ring}</coordinates>
       </LinearRing></outerBoundaryIs></Polygon></Placemark>""")
 
+    # Optional extra lines (for example a road), given as points in metres east/north of corner 1.
+    lines = []
+    for ln in parcel.get("lines", []):
+        base_e, base_n = corners[0][1], corners[0][2]
+        pts = [(base_e + e, base_n + n) for e, n in ln["points_m"]]
+        lines.append(f"""    <Placemark><name>{ln['name']}</name><description>{ln.get('note', '')}</description>
+      {style_xml(ln['style']) if 'style' in ln else '<styleUrl>#outline</styleUrl>'}
+      <LineString><tessellate>1</tessellate><coordinates>{' '.join(coord(e, n) for e, n in pts)}</coordinates></LineString></Placemark>""")
+
     main_style = style_xml(parcel["style"]) if "style" in parcel else "<styleUrl>#outline</styleUrl>"
     tie_line = "" if parcel.get("clean") else f"""    <Placemark><name>Tie line</name><styleUrl>#outline</styleUrl>
       <LineString><tessellate>1</tessellate>
@@ -170,6 +179,7 @@ def write_kml(parcel, monument, corners, path):
       </LinearRing></outerBoundaryIs></Polygon></Placemark>
 {tie_line}
 {chr(10).join(neighbours)}
+{chr(10).join(lines)}
 {chr(10).join(pins)}
   </Document>
 </kml>

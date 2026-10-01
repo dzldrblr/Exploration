@@ -44,3 +44,5 @@ of the main parcel. Neighbours move with the main parcel when you use a `shift`.
 Optional styling: give the main parcel or any neighbour a `"style"` (`line_color`, `fill_color`, `width`, `fill`; colours are
 KML `aabbggrr`), give the main parcel a `"label"`, add a `"description"` for the file, or set `"clean": true` to leave out
 the pins and tie line.
+
+Optional `"lines"`: a list of `{"name", "points_m", "style"}` drawn as lines (for example a road), with points in metres east/north of corner 1.
