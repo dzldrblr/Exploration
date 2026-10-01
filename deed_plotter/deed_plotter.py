@@ -166,6 +166,14 @@ def write_kml(parcel, monument, corners, path):
       <Style><IconStyle><scale>0</scale></IconStyle><LabelStyle><color>{lb.get('color', 'ffffffff')}</color><scale>{lb.get('scale', 1.0)}</scale></LabelStyle></Style>
       <Point><coordinates>{coord(e, n)}</coordinates></Point></Placemark>""")
 
+    # Optional point markers at absolute positions: [{"name", "lat", "lon", "color", "note"}].
+    markers = []
+    for mk in parcel.get("markers", []):
+        markers.append(f"""    <Placemark><name>{mk['name']}</name><description>{mk.get('note', '')}</description>
+      <Style><IconStyle><color>{mk.get('color', 'ffffffff')}</color><scale>{mk.get('scale', 1.2)}</scale>
+        <Icon><href>http://maps.google.com/mapfiles/kml/shapes/placemark_circle.png</href></Icon></IconStyle></Style>
+      <Point><coordinates>{mk['lon']:.8f},{mk['lat']:.8f},0</coordinates></Point></Placemark>""")
+
     main_style = style_xml(parcel["style"]) if "style" in parcel else "<styleUrl>#outline</styleUrl>"
     tie_line = "" if parcel.get("clean") else f"""    <Placemark><name>Tie line</name><styleUrl>#outline</styleUrl>
       <LineString><tessellate>1</tessellate>
@@ -190,6 +198,7 @@ def write_kml(parcel, monument, corners, path):
 {chr(10).join(neighbours)}
 {chr(10).join(lines)}
 {chr(10).join(labels)}
+{chr(10).join(markers)}
 {chr(10).join(pins)}
   </Document>
 </kml>
